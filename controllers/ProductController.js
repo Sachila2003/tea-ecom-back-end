@@ -27,17 +27,17 @@ const createProduct = async (req, res) => {
     }
 };
 
-const getAllproducts = async (req, res) => {
+const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find({});
         res.status(200).json(products);
     } catch (error) {
-        console.error("Server Error in getAllproducts:", error);
-        res.status(500).json({ message: "Server error occurred.", error: error.message });
+        console.error("Error fetching products:", error);
+        res.status(500).json({ message: "Error fetching products from server." });
     }
-}
+};
 
 module.exports = {
     createProduct,
-    getAllproducts
+    getAllProducts
 };

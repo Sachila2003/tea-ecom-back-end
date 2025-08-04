@@ -17,7 +17,7 @@ app.listen(
 );
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Your React app's URL
+  origin: 'http://localhost:5173', 
   credentials: true
 }));
 
