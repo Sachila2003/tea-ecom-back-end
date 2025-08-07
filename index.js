@@ -6,6 +6,7 @@ require('dotenv').config();
 const userRoute = require('./routers/UserRoute');
 const productRoute = require('./routers/ProductRoute');
 const dashboardRoute = require('./routers/DashboardRoute');
+const settingRoute = require('./routers/settingRoute');
 
 const app = express();
 connectDB();
@@ -16,6 +17,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/users', userRoute);
 app.use('/api/products', productRoute);
 app.use('/api/dashboard', dashboardRoute);
+app.use('/api/settings', settingRoute);
 
 const PORT = process.env.SERVER_PORT || 5000;
 app.listen(PORT, () => {
