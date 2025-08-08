@@ -12,6 +12,7 @@ const {
 const { auth, role } = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
+
 router.get("/", getAllProducts);
 router.get("/all", auth, role('admin'), getAllProductsForAdmin);
 router.post("/", auth, role('seller', 'admin'), upload.single("image"), createProduct);
