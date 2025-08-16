@@ -91,10 +91,75 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+//get products for logged seller
+const getSellerProducts = async (req, res) => {
+    try {
+        const products = await Product.find({ seller: req.user.id});
+        res.status(200).json(products);
+    } catch (error) {
+        console.error("Error fetching seller products:", error);
+        res.status(500).json({ error: 'Failed tp fetch your products'});
+    }
+};
+
+//update product by seller
+const updateMyProduct = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ msg: 'Product not found' });
+        
+        // Check if the product belongs to the logged-in seller
+        if (product.seller.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized to update this product' });
+        }
+
+        // Update fields sent from the frontend
+        const { title, description, price, stock, category } = req.body;
+        product.title = title || product.title;
+        product.description = description || product.description;
+        product.price = price !== undefined ? price : product.price;
+        product.stock = stock !== undefined ? stock : product.stock;
+        product.category = category || product.category;
+
+        // Handle image update
+        if (req.file) {
+            product.imageUrl = req.file.path.replace(/\\/g, "/");
+        }
+
+        const updatedProduct = await product.save();
+        res.status(200).json(updatedProduct);
+
+    } catch (error) {
+        console.error("Update My Product Error:", error);
+        res.status(500).json({ msg: 'Server error while updating product' });
+    }
+};
+
+//delete product by seller
+const deleteMyProduct = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ msg: 'Product not found' });
+        
+        if (product.seller.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized to delete this product' });
+        }
+        
+        await Product.findByIdAndDelete(req.params.id);
+        res.status(200).json({ msg: 'Product removed' });
+    } catch (error) {
+        console.error("Delete My Product Error:", error);
+        res.status(500).json({ msg: 'Server error while deleting product' });
+    }
+};
+
 module.exports = {
     createProduct,
     getAllProducts,
     getAllProductsForAdmin,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getSellerProducts,
+    updateMyProduct,
+    deleteMyProduct
 };
